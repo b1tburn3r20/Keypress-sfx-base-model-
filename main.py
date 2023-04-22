@@ -15,26 +15,31 @@ pygame.mixer.set_num_channels(32)
 base_dir = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
 
 sound_effects = {
-    keyboard.Key.enter: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'enter.wav')),
-    keyboard.Key.backspace: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'ckletter2.wav')),
+    keyboard.Key.enter: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'ckletter2.wav')),
+    keyboard.Key.backspace: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'enter.wav')),
     keyboard.Key.space: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'ckletter4.wav')),
     keyboard.Key.tab: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'lcletter1.wav')),
     'general': pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'ckletter3.wav')),
     mouse.Button.left: pygame.mixer.Sound(os.path.join(base_dir, 'sounds', 'letter2.wav')),
 }
 
+pressed_keys = set()
+
 def play_sound(key_name):
     if key_name in sound_effects:
         sound_effects[key_name].play()
 
 def on_key_press(key):
-    if key in sound_effects:
-        play_sound(key)
-    else:
-        play_sound('general')
+    if key not in pressed_keys:
+        pressed_keys.add(key)
+        if key in sound_effects:
+            play_sound(key)
+        else:
+            play_sound('general')
 
 def on_key_release(key):
-    pass
+    if key in pressed_keys:
+        pressed_keys.remove(key)
 
 def on_mouse_click(x, y, button, pressed):
     if pressed and button == mouse.Button.left:
